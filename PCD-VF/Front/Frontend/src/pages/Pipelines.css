@@ -1,0 +1,116 @@
+.main-content {
+  flex: 1;
+  padding: 0;
+  width: calc(100% - 240px);
+  background-color: #ffffff;
+}
+
+.page-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  width: 100%;
+  padding: 50px 40px;
+  background-color: #ffffff;
+}
+
+.page-content h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a3c5e;
+  margin-bottom: 40px;
+}
+
+.pipeline-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.pipeline-step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 120px;
+  height: 60px;
+  background-color: #e5e7eb;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+  text-align: center;
+  padding: 5px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.pipeline-step.active {
+  background-color: #1a3c5e;
+  color: #ffffff;
+}
+
+.pipeline-step.completed {
+  background-color: #d1d5db;
+  color: #6b7280;
+}
+
+.step-label {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.checkmark {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #10b981;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.pipeline-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Conteneur pour les étapes d'entraînement (disposition verticale) */
+.training-steps-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.training-step {
+  width: 140px; /* Légèrement plus large pour les noms de modèles */
+}
+
+/* Flèche verticale entre les étapes d'entraînement */
+.pipeline-arrow-vertical {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Style pour le message d'erreur */
+.error-message {
+  font-size: 16px;
+  color: #dc2626;
+  text-align: center;
+  margin-top: 20px;
+}

@@ -1,0 +1,69 @@
+.sidebar {
+  width: 240px;
+  height: 100vh;
+  background-color: #f5f7fa;
+  padding: 20px;
+  border-right: 1px solid #e5e7eb;
+}
+
+.logo {
+  font-size: 30px;
+  font-weight: 700;
+  color: #1a3c5e;
+  margin-bottom: 40px;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+nav ul li {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 600;
+  padding-left: 20px;
+  position: relative;
+}
+
+/* Style par défaut pour les icônes */
+nav ul li a .icon {
+  margin-right: 10px;
+  font-size: 16px;
+  color: #6b7280; /* Gris par défaut */
+}
+
+/* S'assurer que les icônes SVG héritent de la couleur */
+nav ul li a .icon svg {
+  color: inherit;
+}
+
+/* Style pour les liens actifs */
+nav ul li a.active {
+  color: #f97316; /* Orange pour le texte */
+}
+
+/* Style pour les icônes des liens actifs */
+nav ul li a.active .icon {
+  color: #f97316 !important; /* Orange pour les icônes */
+}
+
+nav ul li a.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background-color: #f97316;
+  border-radius: 2px;
+}
+

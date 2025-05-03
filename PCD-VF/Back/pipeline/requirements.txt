@@ -1,0 +1,17 @@
+pandas
+numpy
+matplotlib
+seaborn
+ydata-profiling
+statsmodels
+scikit-learn
+prophet
+xgboost
+tensorflow==2.10.0
+optuna
+mlflow
+prefect==1.4.1
+psutil
+pmdarima
+scipy
+joblib

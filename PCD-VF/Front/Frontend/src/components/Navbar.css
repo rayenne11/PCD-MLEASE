@@ -1,0 +1,32 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 20px 40px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.navbar h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a3c5e;
+}
+
+
+
+
+
+
+
+.quit-btn {
+  background-color: #e24f4a; /* Orange pour le bouton Quit */
+  color: white;
+  font-weight: 550;
+  padding: 8px 15px;
+  border: none;
+  
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}

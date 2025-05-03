@@ -1,0 +1,177 @@
+.main-content {
+  flex: 1;
+  padding: 0;
+  width: calc(100% - 200px);
+  background-color: #ffffff;
+}
+
+.page-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  flex: 1;
+  width: 100%;
+  padding: 20px 40px;
+  background-color: #ffffff;
+}
+
+.page-content p {
+  font-size: 16px;
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+/* Styles pour les actions (boutons Import Data, Purge, Discover) */
+.data-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.import-btn {
+  padding: 8px 15px;
+  border: none;
+  background-color: #10b981;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.action-btn {
+  padding: 5px 10px;
+  border: none;
+  background-color: #e5e7eb;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.discover-btn {
+  background-color: #e5e7eb;
+  color: #6b7280;
+}
+
+/* Styles pour le tableau */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+}
+
+.data-table th,
+.data-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.data-table th {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a3c5e;
+}
+
+.data-table td {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Styles pour la pop-up (utilisé pour la purge et le rapport EDA) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 5px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles spécifiques pour la pop-up du rapport EDA */
+.modal-report-content {
+  width: 80vw !important;
+  max-width: 80vw !important;
+  height: auto;
+  max-height: 98vh !important;
+  overflow-y: auto;
+}
+
+.modal-content h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a3c5e;
+  margin-bottom: 15px;
+}
+
+.report-container {
+  margin-top: 10px;
+}
+
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.file-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.file-option input[type="radio"] {
+  cursor: pointer;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.modal-btn {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.cancel-btn {
+  background-color: #e5e7eb;
+  color: #6b7280;
+}
+
+.confirm-btn {
+  background-color: #f97316;
+  color: white;
+}
+
+.confirm-btn:disabled {
+  background-color: #d1d5db;
+  cursor: not-allowed;
+}

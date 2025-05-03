@@ -1,0 +1,22 @@
+<svg width="300" height="100" viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Motiva+Sans:wght@700display=swap');
+        text { font-family: 'Motiva Sans', sans-serif; font-weight: bold; letter-spacing: 2px; }
+    </style>
+    
+    <!-- Gradient Background for Depth -->
+    <defs>
+        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#FF5400; stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#D93F00; stop-opacity:1" />
+        </linearGradient>
+    </defs>
+
+    <!-- MLOps-Inspired Symbol (Stylized Circular Flow) -->
+    <circle cx="45" cy="50" r="25" stroke="url(#gradient)" stroke-width="5" fill="none"/>
+    <path d="M35 50 L45 30 L55 50" stroke="url(#gradient)" stroke-width="5" fill="none"/>
+    <path d="M35 50 L45 70 L55 50" stroke="url(#gradient)" stroke-width="5" fill="none"/>
+    
+    <!-- MLEASE Text -->
+    <text x="80" y="65" font-size="50" font-weight="bold" fill="url(#gradient)">MLEASE</text>
+</svg>
