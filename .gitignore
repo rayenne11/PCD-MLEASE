@@ -1,0 +1,16 @@
+Backend/users.db
+*/Backend/*.csv
+*/Backend/*.png
+*/Backend/*.json
+*/Backend/mlruns/
+*/Backend/mlartifacts/
+/Backend/*.csv
+/Backend/*.png
+/Backend/*.json
+/Backend/mlruns/
+/Backend/mlartifacts/
+Backend/back_env/
+Backend/pipeline/*.png
+Backend/pipeline/*.csv
+Backend/pipeline/*.json
+mlflow-data/
