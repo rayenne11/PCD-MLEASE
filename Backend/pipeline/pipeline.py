@@ -5,8 +5,9 @@ from Sarima import train_sarima
 from Prophet import train_prophet
 from Xgboost import train_xgboost
 from Lstm import train_lstm
-import ydata_profiling as yd
+
 import prefect
+import ydata_profiling as yd
 from prefect import Flow, task, Parameter
 import pandas as pd
 import mlflow
@@ -17,9 +18,10 @@ import threading
 import os
 import time
 from mlflow.tracking import MlflowClient
-import tempfile
+import pickle
 import logging
-
+from datetime import datetime, timedelta
+import requests
 
 import sqlite3
 import os
@@ -39,8 +41,6 @@ mlflow.set_tracking_uri("http://localhost:5000")
 client = MlflowClient()
 
 
-
-
 # Terminer tous les runs MLflow actifs au démarrage
 def clean_active_mlflow_runs():
     active_run = mlflow.active_run()
@@ -57,6 +57,24 @@ app.config["SECRET_KEY"] = secrets.token_hex(16)  # Generate a random secret key
 
 # Database setup
 DB_PATH = "users.db"
+
+
+# Vérifier la connexion à MLflow au démarrage
+def check_mlflow_connection():
+    try:
+        response = requests.get("http://localhost:5000", timeout=5)
+        if response.status_code == 200:
+            logger.info("MLflow server is accessible at http://localhost:5000")
+        else:
+            logger.warning(
+                "MLflow server responded with status code: %d", response.status_code
+            )
+    except requests.exceptions.RequestException as e:
+        logger.error("Failed to connect to MLflow server: %s", str(e))
+        logger.warning(
+            "MLflow server may not be running. Predictions requiring model loading will fail."
+        )
+
 
 # Variable globale pour suivre l'état du pipeline
 pipeline_state = {
@@ -149,6 +167,7 @@ def train_models_task(processed_data_path: str, selected_models: list):
     global pipeline_state
     df = pd.read_csv(processed_data_path, parse_dates=True, index_col=0)
     results = {}
+    best_model_info = None
 
     models_to_train = (
         pipeline_state["selected_models"]
@@ -162,38 +181,92 @@ def train_models_task(processed_data_path: str, selected_models: list):
         pipeline_state["status"] = "active"
         with mlflow.start_run(run_name=f"Training_{model_name}", nested=True) as run:
             mlflow.log_param("model_name", model_name)
+            training_run_id = run.info.run_id  # Récupérer le run_id de Training_Prophet
+            logger.info(f"Training {model_name} under run_id: {training_run_id}")
+
             if model_name == "SARIMA":
                 for target_col in df.columns:
                     result = train_sarima(df, target_col)
                     results["SARIMA"] = result
                     mlflow.log_metric(f"mse_{target_col}", result.get("mse", 0))
+                    if (
+                        not best_model_info
+                        or result.get("mse", float("inf")) < best_model_info["mse"]
+                    ):
+                        best_model_info = {
+                            "model_name": model_name,
+                            "run_id": training_run_id,
+                            "mse": result.get("mse", float("inf")),
+                        }
             elif model_name == "Prophet":
                 for target_col in df.columns:
-                    result = train_prophet(df, target_col)
+                    # Passer le run_id à train_prophet pour qu'il utilise le même run
+                    result = train_prophet(df, target_col, run_id=training_run_id)
                     results["Prophet"] = result
                     mlflow.log_metric(f"mse_{target_col}", result.get("mse", 0))
+                    if (
+                        not best_model_info
+                        or result.get("mse", float("inf")) < best_model_info["mse"]
+                    ):
+                        best_model_info = {
+                            "model_name": model_name,
+                            "run_id": training_run_id,
+                            "mse": result.get("mse", float("inf")),
+                        }
             elif model_name == "XGBoost":
                 for target_col in df.columns:
                     result = train_xgboost(df, target_col)
                     results["XGBoost"] = result
                     mlflow.log_metric(f"mse_{target_col}", result.get("mse", 0))
+                    if (
+                        not best_model_info
+                        or result.get("mse", float("inf")) < best_model_info["mse"]
+                    ):
+                        best_model_info = {
+                            "model_name": model_name,
+                            "run_id": training_run_id,
+                            "mse": result.get("mse", float("inf")),
+                        }
             elif model_name == "LSTM":
                 for target_col in df.columns:
                     result = train_lstm(df, target_col)
                     results["LSTM"] = result
                     mlflow.log_metric(f"mse_{target_col}", result.get("mse", 0))
+                    if (
+                        not best_model_info
+                        or result.get("mse", float("inf")) < best_model_info["mse"]
+                    ):
+                        best_model_info = {
+                            "model_name": model_name,
+                            "run_id": training_run_id,
+                            "mse": result.get("mse", float("inf")),
+                        }
+
             # Attendre que MLflow finalise la journalisation des artefacts
             time.sleep(2)
             artifacts = client.list_artifacts(run.info.run_id)
             logger.info(
                 f"{model_name} artifacts logged: {[artifact.path for artifact in artifacts]}"
             )
+
         pipeline_state["status"] = "completed"
         pipeline_state["completed_steps"].append(step_name)
 
-    pipeline_state["current_step"] = "Deployment"
-    pipeline_state["status"] = "completed"
-    pipeline_state["completed_steps"].append("Deployment")
+    # Déployer le meilleur modèle après l'entraînement
+    if best_model_info:
+        pipeline_state["current_step"] = "Deployment"
+        pipeline_state["status"] = "active"
+        pipeline_state["deployed_model"] = {
+            "model_name": best_model_info["model_name"],
+            "run_id": best_model_info["run_id"],
+            "version": "1",  # Version par défaut
+        }
+        logger.info(
+            f"Best model deployed: {best_model_info['model_name']} with run_id: {best_model_info['run_id']}"
+        )
+        pipeline_state["status"] = "completed"
+        pipeline_state["completed_steps"].append("Deployment")
+
     time.sleep(1)
     return results
 
@@ -397,6 +470,8 @@ def upload_data():
         file.save(default_output_path)
         try:
             df = pd.read_csv(default_output_path, parse_dates=True, index_col=0)
+            DataProfile = yd.ProfileReport(df)
+            DataProfile.to_file(".\\pipeline\\index.html")
             if df.empty:
                 return (
                     jsonify(
@@ -405,10 +480,7 @@ def upload_data():
                     400,
                 )
             with mlflow.start_run(run_name="UploadData"):
-                DataProfile = yd.ProfileReport(df)
-                DataProfile.to_file(".\\pipeline\\index.html")
                 mlflow.log_param("data_file_name", file.filename)
-            # Mettre à jour le nom du dernier fichier uploadé
             last_uploaded_file_name = file.filename
         except Exception as e:
             return (
@@ -523,11 +595,9 @@ def get_mlflow_artifacts():
             result = []
             for artifact in artifacts:
                 if artifact.is_dir:
-                    # Si c'est un dossier, parcourir récursivement
                     sub_artifacts = list_artifacts_recursive(run_id, artifact.path)
                     result.extend(sub_artifacts)
                 else:
-                    # Si c'est un fichier, l'ajouter à la liste
                     result.append(artifact)
             return result
 
@@ -562,11 +632,9 @@ def get_mlflow_artifacts():
                         )
                 continue
 
-            # Vérifier les runs principaux comme "Training_Prophet"
             model_name = None
             if run_name.startswith("Training_"):
                 model_name = run_name.replace("Training_", "")
-            # Vérifier les runs imbriqués comme "Prophet_TRFVOLUSM227NFWA"
             elif (
                 run_name.startswith("Prophet_")
                 or run_name.startswith("SARIMA_")
@@ -596,7 +664,6 @@ def get_mlflow_artifacts():
                 f"{model_name} artifacts found: {[artifact.path for artifact in artifacts]}"
             )
             for artifact in artifacts:
-                # Vérifier les fichiers .png dans le sous-répertoire model_plots
                 if artifact.path.startswith("model_plots/") and artifact.path.endswith(
                     ".png"
                 ):
@@ -626,6 +693,210 @@ def get_mlflow_artifacts():
                     "status": "error",
                     "message": f"Error retrieving MLflow artifacts: {str(e)}",
                 }
+            ),
+            500,
+        )
+
+
+# Nouvelle route pour les prédictions
+@app.route("/predict", methods=["POST"])
+def predict():
+    try:
+        # Vérifier si MLflow est accessible
+        try:
+            response = requests.get("http://localhost:5000", timeout=5)
+            if response.status_code != 200:
+                return (
+                    jsonify(
+                        {
+                            "status": "error",
+                            "message": "MLflow server is not accessible. Please ensure it is running on http://localhost:5000.",
+                        }
+                    ),
+                    500,
+                )
+        except requests.exceptions.RequestException as e:
+            logger.error(f"MLflow server check failed: {str(e)}")
+            return (
+                jsonify(
+                    {
+                        "status": "error",
+                        "message": "MLflow server is not accessible. Please ensure it is running on http://localhost:5000.",
+                    }
+                ),
+                500,
+            )
+
+        data = request.get_json()
+        if not data or "model_name" not in data or "input_data" not in data:
+            return (
+                jsonify(
+                    {"status": "error", "message": "Missing model_name or input_data."}
+                ),
+                400,
+            )
+
+        model_name = data["model_name"]
+        input_data = data["input_data"]
+
+        # Vérifier si un modèle est déployé
+        if not pipeline_state.get("deployed_model"):
+            return (
+                jsonify(
+                    {
+                        "status": "error",
+                        "message": "No model deployed. Please run the pipeline first.",
+                    }
+                ),
+                400,
+            )
+
+        deployed_model = pipeline_state["deployed_model"]
+        if deployed_model["model_name"] != model_name:
+            return (
+                jsonify(
+                    {
+                        "status": "error",
+                        "message": f"Requested model {model_name} does not match deployed model {deployed_model['model_name']}.",
+                    }
+                ),
+                400,
+            )
+
+        # Charger le modèle depuis MLflow (fichier model.pkl)
+        run_id = deployed_model["run_id"]
+        model_path = f"{model_name.lower()}_model/model.pkl"
+        logger.info(
+            f"Attempting to download model artifact: run_id={run_id}, path={model_path}"
+        )
+
+        # Vérifier si l'artefact existe
+        try:
+            artifacts = client.list_artifacts(run_id, f"{model_name.lower()}_model")
+            artifact_paths = [artifact.path for artifact in artifacts]
+            logger.info(
+                f"Artifacts found in {model_name.lower()}_model: {artifact_paths}"
+            )
+            if "model.pkl" not in [os.path.basename(path) for path in artifact_paths]:
+                logger.error(f"Model artifact not found: {model_path}")
+                return (
+                    jsonify(
+                        {
+                            "status": "error",
+                            "message": f"Model artifact {model_path} not found in MLflow for run_id {run_id}.",
+                        }
+                    ),
+                    404,
+                )
+        except Exception as e:
+            logger.error(f"Failed to list artifacts: {str(e)}")
+            return (
+                jsonify(
+                    {
+                        "status": "error",
+                        "message": f"Failed to list artifacts: {str(e)}",
+                    }
+                ),
+                500,
+            )
+
+        # Télécharger l'artefact
+        try:
+            local_path = client.download_artifacts(run_id, model_path)
+            logger.info(f"Model artifact downloaded to: {local_path}")
+        except Exception as e:
+            logger.error(f"Failed to download model artifact: {str(e)}")
+            return (
+                jsonify(
+                    {
+                        "status": "error",
+                        "message": f"Failed to download model artifact: {str(e)}",
+                    }
+                ),
+                500,
+            )
+
+        # Charger le modèle
+        try:
+            with open(local_path, "rb") as f:
+                model = pickle.load(f)
+            logger.info(f"Model loaded successfully from {local_path}")
+        except Exception as e:
+            logger.error(f"Failed to load model: {str(e)}")
+            return (
+                jsonify(
+                    {"status": "error", "message": f"Failed to load model: {str(e)}"}
+                ),
+                500,
+            )
+
+        # Traiter les données d'entrée pour Prophet
+        if model_name == "Prophet":
+            # Extraire les valeurs d'entrée (ex: {"value": [1, 2, 3, 4]})
+            if "value" not in input_data:
+                return (
+                    jsonify(
+                        {
+                            "status": "error",
+                            "message": "Input data must contain a 'value' key with a list of numbers.",
+                        }
+                    ),
+                    400,
+                )
+
+            values = input_data["value"]
+            if not values or not isinstance(values, list):
+                return (
+                    jsonify(
+                        {
+                            "status": "error",
+                            "message": "Input data 'value' must be a non-empty list.",
+                        }
+                    ),
+                    400,
+                )
+
+            # Générer des dates fictives (une par valeur d'entrée, à partir de la date actuelle)
+            start_date = datetime.now()
+            dates = [start_date + timedelta(days=i) for i in range(len(values))]
+
+            # Créer un DataFrame au format attendu par Prophet (colonne 'ds')
+            input_df = pd.DataFrame({"ds": dates})
+
+            # Faire des prédictions avec Prophet
+            try:
+                forecast = model.predict(input_df)
+                predictions = forecast["yhat"].tolist()
+                logger.info(f"Predictions generated successfully: {predictions}")
+            except Exception as e:
+                logger.error(f"Failed to generate predictions: {str(e)}")
+                return (
+                    jsonify(
+                        {
+                            "status": "error",
+                            "message": f"Failed to generate predictions: {str(e)}",
+                        }
+                    ),
+                    500,
+                )
+
+            return jsonify({"status": "success", "predictions": predictions})
+        else:
+            return (
+                jsonify(
+                    {
+                        "status": "error",
+                        "message": f"Prediction not implemented for model type {model_name}.",
+                    }
+                ),
+                400,
+            )
+
+    except Exception as e:
+        logger.error(f"Error during prediction: {str(e)}")
+        return (
+            jsonify(
+                {"status": "error", "message": f"Error during prediction: {str(e)}"}
             ),
             500,
         )
@@ -672,7 +943,8 @@ def reset_pipeline():
     pipeline_state["status"] = "inactive"
     pipeline_state["completed_steps"] = []
     pipeline_state["selected_models"] = []
-    last_uploaded_file_name = "Unknown"  # Réinitialiser le nom du fichier
+    pipeline_state.pop("deployed_model", None)  # Réinitialiser le modèle déployé
+    last_uploaded_file_name = "Unknown"
     return jsonify(
         {"status": "success", "message": "Pipeline state reset successfully."}
     )
@@ -709,6 +981,8 @@ def run_pipeline():
 # Lancer le serveur Flask
 if __name__ == "__main__":
     clean_active_mlflow_runs()
+    check_mlflow_connection()
     init_db()
 
+    logger.info("Starting Flask server on http://0.0.0.0:5001")
     app.run(host="0.0.0.0", port=5001, debug=True)

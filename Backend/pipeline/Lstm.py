@@ -26,7 +26,7 @@ def create_sequences(X, y, seq_length=12):
     return np.array(Xs), np.array(ys)
 
 def train_lstm(df, target_column):
-    mlflow.set_tracking_uri("http://127.0.0.1:5000")
+    # mlflow.set_tracking_uri("http://127.0.0.1:5000")
     logger.info(f"Training LSTM model for {target_column}...")
     
     df.index = pd.to_datetime(df.index)

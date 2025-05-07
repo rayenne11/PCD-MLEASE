@@ -23,7 +23,7 @@ def train_sarima(df, target_column):
     Returns:
     - dict: Results including MSE and forecast DataFrame
     """
-    mlflow.set_tracking_uri("http://127.0.0.1:5000")
+    # mlflow.set_tracking_uri("http://127.0.0.1:5000")
     logger.info(f"Training SARIMA model for {target_column}...")
     
     df.index = pd.to_datetime(df.index)

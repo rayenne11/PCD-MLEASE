@@ -1,3 +1,10 @@
+@import "tailwindcss";
+
+@theme {
+  --spacing-nav: 12.5dvh;
+  --spacing-main: 87.5dvh;
+}
+
 /* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

@@ -172,7 +172,7 @@ def generate_mlops_report(df):
     return report
 
 def run_eda(df, output_report_path):
-    mlflow.set_tracking_uri("http://127.0.0.1:5000")
+    # mlflow.set_tracking_uri("http://127.0.0.1:5000")
     # Log DataFrame columns and types for debugging
     logging.info(f"Initial DataFrame columns: {df.columns.tolist()}")
     logging.info(f"DataFrame dtypes:\n{df.dtypes}")
@@ -226,8 +226,6 @@ def run_eda(df, output_report_path):
     df = handle_missing_values(df)
     mlflow.log_metric("missing_values_after", df.isnull().sum().sum())
 
-
- 
     # Générer le rapport MLOps
     final_report = generate_mlops_report(df)
     with open(output_report_path, 'w') as f:

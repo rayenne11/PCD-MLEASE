@@ -45,7 +45,7 @@ def create_features(df, target_column, lags=3, rolling_windows=[]):
     return X_train, X_test, y_train, y_test
 
 def train_xgboost(df, target_column):
-    mlflow.set_tracking_uri("http://127.0.0.1:5000")
+    # mlflow.set_tracking_uri("http://127.0.0.1:5000")
     logger.info(f"Training XGBoost model for {target_column}...")
     
     df.index = pd.to_datetime(df.index)

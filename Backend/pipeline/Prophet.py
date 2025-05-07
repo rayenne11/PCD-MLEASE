@@ -14,7 +14,7 @@ import os
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
-def train_prophet(df, target_column):
+def train_prophet(df, target_column, run_id):
     """
     Train a Prophet model on the specified target column of the DataFrame.
     
@@ -25,7 +25,7 @@ def train_prophet(df, target_column):
     Returns:
     - dict: Results including MSE and forecast DataFrame
     """
-    mlflow.set_tracking_uri("http://127.0.0.1:5000")
+    # mlflow.set_tracking_uri("http://127.0.0.1:5000")
     logger.info(f"Training Prophet model for {target_column}...")
     
     # Vérifier que l'index est un DatetimeIndex

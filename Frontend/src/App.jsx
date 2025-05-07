@@ -1,20 +1,27 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-dom';
-import Swal from 'sweetalert2';
-import Sidebar from './components/Sidebar';
-import Navbar from './components/Navbar';
-import Dashboard from './pages/Dashboard';
-import Data from './pages/Data';
-import Models from './pages/Models';
-
-import Pipelines from './pages/Pipelines';
-import Execution from './pages/Execution';
-import Settings from './pages/Settings';
-import HomePage from './pages/Homepage';
-import AuthPage from './pages/AuthPage';
-import { AppProvider, useAppContext } from './context/AppContext';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import './styles.css';
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
+import Swal from "sweetalert2";
+import Sidebar from "./components/Sidebar";
+import Navbar from "./components/Navbar";
+import Dashboard from "./pages/Dashboard";
+import Data from "./pages/Data";
+import Models from "./pages/Models";
+import Deployment from "./pages/Deployment";
+import Pipelines from "./pages/Pipelines";
+import Execution from "./pages/Execution";
+import Settings from "./pages/Settings";
+import HomePage from "./pages/Homepage";
+import AuthPage from "./pages/AuthPage";
+import { AppProvider, useAppContext } from "./context/AppContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import "./styles.css";
 
 // Composant pour gérer l'authentification et les restrictions du projet
 const ProtectedRoute = ({ children, requireProjectSetup = false }) => {
@@ -35,16 +42,16 @@ const ProtectedRoute = ({ children, requireProjectSetup = false }) => {
   // Vérifier la configuration du projet si nécessaire
   if (requireProjectSetup) {
     const isProjectSetup = appState.projectName && appState.projectId;
-    if (!isProjectSetup && location.pathname !== '/settings') {
+    if (!isProjectSetup && location.pathname !== "/settings") {
       Swal.fire({
-        title: 'Setup Required',
-        text: 'Please configure the project settings (name and ID) before proceeding.',
-        icon: 'warning',
-        confirmButtonColor: '#f97316',
+        title: "Setup Required",
+        text: "Please configure the project settings (name and ID) before proceeding.",
+        icon: "warning",
+        confirmButtonColor: "#f97316",
         allowOutsideClick: false,
         allowEscapeKey: false,
       }).then(() => {
-        window.location.href = '/settings';
+        window.location.href = "/settings";
       });
       return <Navigate to="/settings" replace />;
     }
@@ -61,27 +68,27 @@ const NavbarWithQuit = () => {
 
   const handleQuit = () => {
     Swal.fire({
-      title: 'Quit Project',
-      text: 'Are you sure you want to quit this project? All progress will be lost.',
-      icon: 'warning',
+      title: "Quit Project",
+      text: "Are you sure you want to quit this project? All progress will be lost.",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#f97316',
-      cancelButtonColor: '#e5e7eb',
-      confirmButtonText: 'Yes, quit',
-      cancelButtonText: 'Cancel',
+      confirmButtonColor: "#f97316",
+      cancelButtonColor: "#e5e7eb",
+      confirmButtonText: "Yes, quit",
+      cancelButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
         resetAppState();
         logout();
         Swal.fire({
-          title: 'Project Quit',
-          text: 'You have successfully quit the project.',
-          icon: 'success',
+          title: "Project Quit",
+          text: "You have successfully quit the project.",
+          icon: "success",
           timer: 2000,
           showConfirmButton: false,
         });
         setTimeout(() => {
-          navigate('/');
+          navigate("/");
         }, 2000);
       }
     });
@@ -94,10 +101,10 @@ const NavbarWithQuit = () => {
 const AppContent = () => {
   const { appState } = useAppContext();
   const location = useLocation();
-  const isFullWidth = ['/', '/signin', '/signup'].includes(location.pathname);
+  const isFullWidth = ["/", "/signin", "/signup"].includes(location.pathname);
 
   return (
-    <div className={`app ${isFullWidth ? 'app-full-width' : ''}`}>
+    <div className={`app ${isFullWidth ? "app-full-width" : ""}`}>
       <Routes>
         {/* Routes publiques (pas de sidebar) */}
         <Route path="/" element={<HomePage />} />
@@ -109,7 +116,9 @@ const AppContent = () => {
           path="/dashboard"
           element={
             <ProtectedRoute requireProjectSetup>
-              <Sidebar isProjectSetup={appState.projectName && appState.projectId} />
+              <Sidebar
+                isProjectSetup={appState.projectName && appState.projectId}
+              />
               <div className="main-content">
                 <NavbarWithQuit />
                 <Dashboard />
@@ -121,7 +130,9 @@ const AppContent = () => {
           path="/data"
           element={
             <ProtectedRoute requireProjectSetup>
-              <Sidebar isProjectSetup={appState.projectName && appState.projectId} />
+              <Sidebar
+                isProjectSetup={appState.projectName && appState.projectId}
+              />
               <div className="main-content">
                 <NavbarWithQuit />
                 <Data />
@@ -133,7 +144,9 @@ const AppContent = () => {
           path="/models"
           element={
             <ProtectedRoute requireProjectSetup>
-              <Sidebar isProjectSetup={appState.projectName && appState.projectId} />
+              <Sidebar
+                isProjectSetup={appState.projectName && appState.projectId}
+              />
               <div className="main-content">
                 <NavbarWithQuit />
                 <Models />
@@ -142,10 +155,26 @@ const AppContent = () => {
           }
         />
         <Route
+          path="/deployment"
+          element={
+            <ProtectedRoute requireProjectSetup>
+              <Sidebar
+                isProjectSetup={appState.projectName && appState.projectId}
+              />
+              <div className="main-content">
+                <NavbarWithQuit />
+                <Deployment />
+              </div>
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/pipelines"
           element={
             <ProtectedRoute requireProjectSetup>
-              <Sidebar isProjectSetup={appState.projectName && appState.projectId} />
+              <Sidebar
+                isProjectSetup={appState.projectName && appState.projectId}
+              />
               <div className="main-content">
                 <NavbarWithQuit />
                 <Pipelines />
@@ -157,7 +186,9 @@ const AppContent = () => {
           path="/execution"
           element={
             <ProtectedRoute requireProjectSetup>
-              <Sidebar isProjectSetup={appState.projectName && appState.projectId} />
+              <Sidebar
+                isProjectSetup={appState.projectName && appState.projectId}
+              />
               <div className="main-content">
                 <NavbarWithQuit />
                 <Execution />
@@ -169,7 +200,9 @@ const AppContent = () => {
           path="/settings"
           element={
             <ProtectedRoute>
-              <Sidebar isProjectSetup={appState.projectName && appState.projectId} />
+              <Sidebar
+                isProjectSetup={appState.projectName && appState.projectId}
+              />
               <div className="main-content">
                 <NavbarWithQuit />
                 <Settings />
