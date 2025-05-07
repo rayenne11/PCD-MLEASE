@@ -226,6 +226,8 @@ def run_eda(df, output_report_path):
     df = handle_missing_values(df)
     mlflow.log_metric("missing_values_after", df.isnull().sum().sum())
 
+
+ 
     # Générer le rapport MLOps
     final_report = generate_mlops_report(df)
     with open(output_report_path, 'w') as f:

@@ -1,0 +1,39 @@
+
+# Web Framework
+Flask==2.3.2
+flask-cors==4.0.0
+
+# Data Processing
+pandas==2.2.1
+numpy==1.26.4
+scipy
+
+# Data Visualization
+matplotlib
+seaborn
+
+# Machine Learning
+scikit-learn
+xgboost
+tensorflow==2.10.0
+
+# Model Optimization
+optuna
+optuna-integration[tfkeras]
+
+# Time Series
+prophet
+pmdarima
+
+# ML Tracking and Workflow
+mlflow==2.11.3
+prefect==1.4.1
+
+# Data Profiling
+ydata-profiling
+statsmodels
+
+# Utilities
+PyJWT==2.8.0
+psutil
+joblib

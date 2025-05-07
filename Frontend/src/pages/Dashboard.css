@@ -23,7 +23,8 @@
 .model-section {
   border: 1px solid #ddd;
   padding: 15px;
-  width: 1400px;
+  width: 82dvw;
+  margin-bottom: 3dvh;
   border-radius: 8px;
   background-color: #f9f9f9;
 }
