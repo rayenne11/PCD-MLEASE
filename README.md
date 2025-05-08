@@ -209,8 +209,8 @@ Before running the project, ensure you have the following installed:
 
 3. 📊 **View Artifacts**:
    <p align="center"> <img src="./docs/dashboard.png" alt="MLflow Dashboard" width="900"/> </p> 
-   <p align="center"> <img src="./docs/xgboost_dashboard.png" alt="XGBoost Dashboard" width="900"/> </p> 
-   <p align="center"> <img src="./docs/prophet_sarima.png" alt="Prophet/SARIMA Charts" width="900"/> </p>
+   <p align="center"> <img src="./docs/xgboost_dashboard.png" alt="XGBoost Dashboard" width="500"/> </p> 
+   <p align="center"> <img src="./docs/prophet_sarima.png" alt="Prophet/SARIMA Charts" width="500"/> </p>
 
    - Go to the "Dashboard" page to view EDA reports, model metrics (with full precision), and plots logged in MLflow.
 
