@@ -1,8 +1,8 @@
-# TimeSeries Forecasting Pipeline
+# MLEASE: Towards automated machine learning pipelines for Time-series data
 
 ## 📖 Overview
 
-This project is a **TimeSeries Forecasting Pipeline** designed to analyze, train, and predict time series data using various machine learning models. It features a backend built with Flask and orchestrated using **Prefect** for robust workflow management, paired with a React-based frontend for interactive visualization and control. The pipeline supports models such as SARIMA, Prophet, XGBoost, and LSTM, with integration to **MLflow** for experiment tracking and artifact management. The project is containerized with Docker, enabling consistent deployment and scalability.
+MLEASE is a **TimeSeries Forecasting Pipeline Project** designed to analyze, train, and predict time series data using various machine learning models. It features a backend built with Flask and orchestrated using **Prefect** for robust workflow management, paired with a React-based frontend for interactive visualization and control. The pipeline supports models such as SARIMA, Prophet, XGBoost, and LSTM, with integration to **MLflow** for experiment tracking and artifact management. The project is containerized with Docker, enabling consistent deployment and scalability.
 
 <p align="center">
   <img src="./docs/Capture d’écran 2025-05-08 221016.png" alt="Overview Diagram" width="900"/>
