@@ -1,0 +1,21 @@
+# Ignore Python bytecode and virtual environments
+/pipeline/__pycache__/
+/back_env/
+
+# Ignore MLflow outputs
+mlruns/
+mlartifacts/
+
+# Ignore everything
+*
+
+# Allow only specific file types and directories
+!*.py
+!*.html
+!requirements.txt
+!pipeline/
+!pipeline/*.py
+# !authent/
+!authent/*.py
+# !datasets/
+!datasets/*.csv

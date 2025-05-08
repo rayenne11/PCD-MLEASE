@@ -37,7 +37,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Configurer MLflow
-mlflow.set_tracking_uri("http://localhost:5000")
+# mlflow.set_tracking_uri("http://localhost:5000")
 client = MlflowClient()
 
 
@@ -110,7 +110,7 @@ def run_eda_task(data_path: str, output_report_path: str):
         DataProfile = yd.ProfileReport(df)
         DataProfile.to_file("index.html")
         mlflow.log_artifact("index.html", artifact_path="eda_html_report")
-        artifacts = client.list_artifacts(mlflow.active_run().info.run_id)
+        artifacts = client.list_artifacts(mlflow.active_run().info.docker)
         logger.info(
             f"EDA artifacts logged: {[artifact.path for artifact in artifacts]}"
         )
@@ -471,7 +471,8 @@ def upload_data():
         try:
             df = pd.read_csv(default_output_path, parse_dates=True, index_col=0)
             DataProfile = yd.ProfileReport(df)
-            DataProfile.to_file(".\\pipeline\\index.html")
+            print("Current working directory:", os.getcwd())
+            DataProfile.to_file("/app/pipeline/index.html")
             if df.empty:
                 return (
                     jsonify(
