@@ -5,7 +5,7 @@
 This project is a **TimeSeries Forecasting Pipeline** designed to analyze, train, and predict time series data using various machine learning models. It features a backend built with Flask and orchestrated using **Prefect** for robust workflow management, paired with a React-based frontend for interactive visualization and control. The pipeline supports models such as SARIMA, Prophet, XGBoost, and LSTM, with integration to **MLflow** for experiment tracking and artifact management. The project is containerized with Docker, enabling consistent deployment and scalability.
 
 <p align="center">
-  <img src="./docs/Capture d’écran 2025-05-08 221016.png" alt="Overview Diagram" width="500"/>
+  <img src="./docs/Capture d’écran 2025-05-08 221016.png" alt="Overview Diagram" width="900"/>
 </p>
 
 ### 🚀 Key Features
@@ -186,8 +186,8 @@ Before running the project, ensure you have the following installed:
 ## Usage
 
 1. 📁 **Upload a Dataset**:
-   <p align="center"> <img src="./docs/settings.png" alt="Upload Settings" width="500"/> </p> 
-   <p align="center"> <img src="./docs/import.png" alt="Upload Import" width="500"/> </p>
+   <p align="center"> <img src="./docs/settings.png" alt="Upload Settings" width="900"/> </p> 
+   <p align="center"> <img src="./docs/import.png" alt="Upload Import" width="900"/> </p>
 
    - Navigate to the React frontend at `http://localhost:3000`.
    - Create an account.
@@ -195,9 +195,9 @@ Before running the project, ensure you have the following installed:
    - Upload a CSV file containing time series data with column `DATE` (in `YYYY-MM-DD` format) and at least another column (the target variable).
 
 2. 🧠 **Run the Pipeline with Real-Time Training**:
-   <img src="./docs/execution.png" alt="" width="400"/> <br />
-   <img src="./docs/realtime_tracking.png" alt="" width="400"/> <br />
-   <img src="./docs/pipeline.png" alt="" width="400"/> <br />
+   <p align="center"> <img src="./docs/execution.png" alt="Pipeline Execution" width="900"/> </p> 
+   <p align="center"> <img src="./docs/realtime_tracking.png" alt="Real-Time Tracking" width="900"/> </p> 
+   <p align="center"> <img src="./docs/pipeline.png" alt="Pipeline Steps" width="900"/> </p>
 
    - Select models to train (e.g., SARIMA, Prophet, XGBoost, LSTM) via the "Model Selection" section.
    - Start the pipeline by clicking "Create Execution".
@@ -208,14 +208,14 @@ Before running the project, ensure you have the following installed:
      - Evaluation and deployment of the best-performing model.
 
 3. 📊 **View Artifacts**:
-   <img src="./docs/dashboard.png" alt="" width="400"/> <br />
-   <img src="./docs/xgboost_dashboard.png" alt="" width="400"/> <br />
-   <img src="./docs/prophet_sarima.png" alt="" width="400"/> <br />
+   <p align="center"> <img src="./docs/dashboard.png" alt="MLflow Dashboard" width="900"/> </p> 
+   <p align="center"> <img src="./docs/xgboost_dashboard.png" alt="XGBoost Dashboard" width="900"/> </p> 
+   <p align="center"> <img src="./docs/prophet_sarima.png" alt="Prophet/SARIMA Charts" width="900"/> </p>
 
    - Go to the "Dashboard" page to view EDA reports, model metrics (with full precision), and plots logged in MLflow.
 
 4. 📡 **Make Real-Time Predictions**:
-   <img src="./docs/prediction.png" alt="" width="400"/> <br />
+   <p align="center"> <img src="./docs/prediction.png" alt="Prediction Panel" width="900"/> </p>
 
    - Go to the "Deployment" page.
    - Use the deployed model to make predictions:
