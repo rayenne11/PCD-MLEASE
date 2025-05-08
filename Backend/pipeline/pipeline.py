@@ -37,7 +37,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Configurer MLflow
-# mlflow.set_tracking_uri("http://localhost:5000")
+mlflow.set_tracking_uri("http://pcd-mlease-mlflow:5000")
 client = MlflowClient()
 
 
@@ -62,7 +62,7 @@ DB_PATH = "users.db"
 # Vérifier la connexion à MLflow au démarrage
 def check_mlflow_connection():
     try:
-        response = requests.get("http://localhost:5000", timeout=5)
+        response = requests.get("http://pcd-mlease-mlflow:5000", timeout=5)
         if response.status_code == 200:
             logger.info("MLflow server is accessible at http://localhost:5000")
         else:
@@ -110,7 +110,7 @@ def run_eda_task(data_path: str, output_report_path: str):
         DataProfile = yd.ProfileReport(df)
         DataProfile.to_file("index.html")
         mlflow.log_artifact("index.html", artifact_path="eda_html_report")
-        artifacts = client.list_artifacts(mlflow.active_run().info.docker)
+        artifacts = client.list_artifacts(mlflow.active_run().info.run_id)
         logger.info(
             f"EDA artifacts logged: {[artifact.path for artifact in artifacts]}"
         )
@@ -705,13 +705,13 @@ def predict():
     try:
         # Vérifier si MLflow est accessible
         try:
-            response = requests.get("http://localhost:5000", timeout=5)
+            response = requests.get("http://pcd-mlease-mlflow:5000", timeout=5)
             if response.status_code != 200:
                 return (
                     jsonify(
                         {
                             "status": "error",
-                            "message": "MLflow server is not accessible. Please ensure it is running on http://localhost:5000.",
+                            "message": "MLflow server is not accessible. Please ensure it is running on http://pcd-mlease-mlflow:5000.",
                         }
                     ),
                     500,
@@ -722,7 +722,7 @@ def predict():
                 jsonify(
                     {
                         "status": "error",
-                        "message": "MLflow server is not accessible. Please ensure it is running on http://localhost:5000.",
+                        "message": "MLflow server is not accessible. Please ensure it is running on http://pcd-mlease-mlflow:5000.",
                     }
                 ),
                 500,
