@@ -73,7 +73,7 @@ PCD-MLEASE/
 Before running the project, ensure you have the following installed:
 
 - **Docker** and **Docker Compose** (for containerized deployment)
-- **Python 3.8+** (if running the backend locally without Docker)
+- **Python (3.8-3.10)** (if running the backend locally without Docker)
 - **Node.js 14+** and **npm** (if running the frontend locally without Docker)
 - **MLflow Server** (running on `http://localhost:5000` for experiment tracking)
 
@@ -97,7 +97,7 @@ Before running the project, ensure you have the following installed:
    - Example command to start MLflow server:
 
      ```bash
-     mlflow ui
+     mlflow server
      ```
 
 3. **Build and Run with Docker Compose**:
@@ -111,11 +111,11 @@ Before running the project, ensure you have the following installed:
    - This will:
 
      - Build and run the backend Flask app on `http://localhost:5001`.
-     - Build and run the frontend React app on `http://localhost:3000`.
+     - Build and run the frontend React app on `http://localhost:5173`.
 
 4. **Access the Application**:
 
-   - Open your browser and navigate to `http://localhost:3000` to access the React frontend.
+   - Open your browser and navigate to `http://localhost:5173` to access the React frontend.
    - The backend API will be available at `http://localhost:5001`.
 
 ---
@@ -149,13 +149,12 @@ Before running the project, ensure you have the following installed:
    - Ensure MLflow is running on `http://localhost:5000`:
 
      ```bash
-     mlflow ui
+     mlflow server
      ```
 
 5. **Run the Backend**:
 
    ```bash
-   python app.py #for the authentification
    python pipeline.py
    ```
 
@@ -189,7 +188,7 @@ Before running the project, ensure you have the following installed:
    <p align="center"> <img src="./docs/settings.png" alt="Upload Settings" width="900"/> </p> 
    <p align="center"> <img src="./docs/import.png" alt="Upload Import" width="900"/> </p>
 
-   - Navigate to the React frontend at `http://localhost:3000`.
+   - Navigate to the React frontend at `http://localhost:5173`.
    - Create an account.
    - Go to the "import Data" section.
    - Upload a CSV file containing time series data with column `DATE` (in `YYYY-MM-DD` format) and at least another column (the target variable).
