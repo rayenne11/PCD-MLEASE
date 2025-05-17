@@ -186,8 +186,7 @@ Before running the project, ensure you have the following installed:
 
 1. 📁 **Upload a Dataset**:
    <p align="center"> <img src="./docs/settings.png" alt="Upload Settings" width="900"/> </p> 
-   <p align="center"> <img src="./docs/import.png" alt="Upload Import" width="900"/> </p>
-
+  
    - Navigate to the React frontend at `http://localhost:5173`.
    - Create an account.
    - Go to the "import Data" section.
